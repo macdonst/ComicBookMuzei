@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package com.simonmacdonald.muzei.marvel;
+package com.simonmacdonald.muzei.comic;
 
 import java.util.List;
 
 import retrofit.http.GET;
 
-interface MarvelService {
+interface ComicCoverService {
     @GET("/v1/photos?feature=popular&sort=rating&image_size=5&rpp=40")
     PhotosResponse getPopularPhotos();
 

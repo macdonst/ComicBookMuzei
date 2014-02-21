@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.simonmacdonald.muzei.marvel;
+package com.simonmacdonald.muzei.comic;
 
 public interface Config {
     public static final String CONSUMER_KEY = "HocY5wY9GQaa9sdNO9HvagCGuGt34snyMTHckIQJ";

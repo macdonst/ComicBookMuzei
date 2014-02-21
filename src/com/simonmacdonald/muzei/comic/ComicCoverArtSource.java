@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.simonmacdonald.muzei.marvel;
+package com.simonmacdonald.muzei.comic;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -23,6 +23,8 @@ import android.util.Log;
 
 import com.google.android.apps.muzei.api.Artwork;
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource;
+import com.simonmacdonald.muzei.comic.ComicCoverService.Photo;
+import com.simonmacdonald.muzei.comic.ComicCoverService.PhotosResponse;
 
 import java.util.Random;
 
@@ -31,16 +33,13 @@ import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 
-import static com.simonmacdonald.muzei.marvel.MarvelService.Photo;
-import static com.simonmacdonald.muzei.marvel.MarvelService.PhotosResponse;
-
-public class MarvelArtSource extends RemoteMuzeiArtSource {
-    private static final String TAG = "500pxExample";
-    private static final String SOURCE_NAME = "FiveHundredPxExampleArtSource";
+public class ComicCoverArtSource extends RemoteMuzeiArtSource {
+    private static final String TAG = "ComicCoverArtSource";
+    private static final String SOURCE_NAME = "ComicCoverArtSource";
 
     private static final int ROTATE_TIME_MILLIS = 3 * 60 * 60 * 1000; // rotate every 3 hours
 
-    public MarvelArtSource() {
+    public ComicCoverArtSource() {
         super(SOURCE_NAME);
     }
 
@@ -55,7 +54,7 @@ public class MarvelArtSource extends RemoteMuzeiArtSource {
         String currentToken = (getCurrentArtwork() != null) ? getCurrentArtwork().getToken() : null;
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setServer("https://api.500px.com")
+                .setEndpoint("https://api.500px.com")
                 .setRequestInterceptor(new RequestInterceptor() {
                     @Override
                     public void intercept(RequestFacade request) {
@@ -76,7 +75,7 @@ public class MarvelArtSource extends RemoteMuzeiArtSource {
                 })
                 .build();
 
-        MarvelService service = restAdapter.create(MarvelService.class);
+        ComicCoverService service = restAdapter.create(ComicCoverService.class);
         PhotosResponse response = service.getPopularPhotos();
 
         if (response == null || response.photos == null) {
