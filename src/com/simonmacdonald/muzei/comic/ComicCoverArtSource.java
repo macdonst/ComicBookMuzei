@@ -103,16 +103,16 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
         // <img id="image-1" class="cover" src="http://i.annihil.us/u/prod/marvel/i/mg/6/80/5284ea82357da.jpg">
 
         Log.d(TAG, "title = " + response.title);
-        Log.d(TAG, "author = " + response.author);
-        Log.d(TAG, "imageUrl = " + response.imgUrl);
+        Log.d(TAG, "author = " + response.date);
+        Log.d(TAG, "imageUrl = " + response.url);
         
         publishArtwork(new Artwork.Builder()
                 .title(response.title)
-                .byline(response.author)
-                .imageUri(Uri.parse(response.imgUrl))
+                .byline("Data provided by Marvel. © 2014 Marvel")
+                .imageUri(Uri.parse(response.url))
                 //.token(token)
                 .viewIntent(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(response.imgUrl)))
+                        Uri.parse(response.url)))
                 .build());
 
         scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);

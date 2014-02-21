@@ -23,8 +23,8 @@ interface ComicCoverService {
     Cover getRandomCover();
 
     static class Cover {
-        String imgUrl;
+        String url;
         String title;
-        String author;
+        String date;
     }
 }
