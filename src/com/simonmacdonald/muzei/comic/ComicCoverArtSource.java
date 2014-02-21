@@ -23,14 +23,14 @@ import android.util.Log;
 
 import com.google.android.apps.muzei.api.Artwork;
 import com.google.android.apps.muzei.api.RemoteMuzeiArtSource;
-import com.simonmacdonald.muzei.comic.ComicCoverService.Photo;
-import com.simonmacdonald.muzei.comic.ComicCoverService.PhotosResponse;
+import com.simonmacdonald.muzei.comic.ComicCoverService.Cover;
 
 import java.util.Random;
 
 import retrofit.ErrorHandler;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
+import retrofit.RestAdapter.LogLevel;
 import retrofit.RetrofitError;
 
 public class ComicCoverArtSource extends RemoteMuzeiArtSource {
@@ -54,7 +54,8 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
         String currentToken = (getCurrentArtwork() != null) ? getCurrentArtwork().getToken() : null;
 
         RestAdapter restAdapter = new RestAdapter.Builder()
-                .setEndpoint("https://api.500px.com")
+                .setEndpoint("https://mighty-harbor-8598.herokuapp.com/")
+                .setLogLevel(LogLevel.FULL)
                 .setRequestInterceptor(new RequestInterceptor() {
                     @Override
                     public void intercept(RequestFacade request) {
@@ -76,36 +77,42 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                 .build();
 
         ComicCoverService service = restAdapter.create(ComicCoverService.class);
-        PhotosResponse response = service.getPopularPhotos();
+        Cover response = service.getRandomCover();
 
-        if (response == null || response.photos == null) {
+        if (response == null) {
             throw new RetryException();
         }
 
-        if (response.photos.size() == 0) {
-            Log.w(TAG, "No photos returned from API.");
-            scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);
-            return;
-        }
+//        if (response.photos.size() == 0) {
+//            Log.w(TAG, "No photos returned from API.");
+//            scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);
+//            return;
+//        }
+//
+//        Random random = new Random();
+//        Photo photo;
+//        String token;
+//        while (true) {
+//            photo = response.photos.get(random.nextInt(response.photos.size()));
+//            token = Integer.toString(photo.id);
+//            if (response.photos.size() <= 1 || !TextUtils.equals(token, currentToken)) {
+//                break;
+//            }
+//        }
+        
+        // <img id="image-1" class="cover" src="http://i.annihil.us/u/prod/marvel/i/mg/6/80/5284ea82357da.jpg">
 
-        Random random = new Random();
-        Photo photo;
-        String token;
-        while (true) {
-            photo = response.photos.get(random.nextInt(response.photos.size()));
-            token = Integer.toString(photo.id);
-            if (response.photos.size() <= 1 || !TextUtils.equals(token, currentToken)) {
-                break;
-            }
-        }
-
+        Log.d(TAG, "title = " + response.title);
+        Log.d(TAG, "author = " + response.author);
+        Log.d(TAG, "imageUrl = " + response.imgUrl);
+        
         publishArtwork(new Artwork.Builder()
-                .title(photo.name)
-                .byline(photo.user.fullname)
-                .imageUri(Uri.parse(photo.image_url))
-                .token(token)
+                .title(response.title)
+                .byline(response.author)
+                .imageUri(Uri.parse(response.imgUrl))
+                //.token(token)
                 .viewIntent(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://500px.com/photo/" + photo.id)))
+                        Uri.parse(response.imgUrl)))
                 .build());
 
         scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);

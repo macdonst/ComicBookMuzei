@@ -16,26 +16,15 @@
 
 package com.simonmacdonald.muzei.comic;
 
-import java.util.List;
-
 import retrofit.http.GET;
 
 interface ComicCoverService {
-    @GET("/v1/photos?feature=popular&sort=rating&image_size=5&rpp=40")
-    PhotosResponse getPopularPhotos();
+    @GET("/cover")
+    Cover getRandomCover();
 
-    static class PhotosResponse {
-        List<Photo> photos;
-    }
-
-    static class Photo {
-        int id;
-        String image_url;
-        String name;
-        User user;
-    }
-
-    static class User {
-        String fullname;
+    static class Cover {
+        String imgUrl;
+        String title;
+        String author;
     }
 }
