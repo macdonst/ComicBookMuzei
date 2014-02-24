@@ -21,4 +21,7 @@
     <string name="hello_world">Hello World</string>
     <string name="action_settings">action_settings</string>
     <string name="title_settings">Settings</string>
+    <string name="refresh_interval">Refresh interval</string>
+    <string name="refresh_interval_summary">How frequently to update the image</string>
+    <string name="download_on_wifi">Only download images on wifi</string>
 </resources>

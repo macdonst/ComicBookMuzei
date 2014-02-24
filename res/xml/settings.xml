@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory>
+            
+        <ListPreference
+                android:key="refresh_preference"
+                android:title="@string/refresh_interval"
+                android:summary="@string/refresh_interval_summary"
+                android:entries="@array/refreshInterval"
+                android:entryValues="@array/refreshIntervalValues"
+                android:defaultValue="180"
+                android:dialogTitle="@string/refresh_interval" />
+        <CheckBoxPreference
+                android:key="checkbox_preference"
+                android:title="@string/download_on_wifi"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
