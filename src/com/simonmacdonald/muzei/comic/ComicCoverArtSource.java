@@ -54,6 +54,9 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
     @Override
     protected void onTryUpdate(int reason) throws RetryException {
         String currentToken = (getCurrentArtwork() != null) ? getCurrentArtwork().getToken() : null;
+        
+        Log.d(TAG, "wifi = " + Utils.getConfigConnection(this));
+        Log.d(TAG, "refresh = " + Utils.getConfigFreq(this));
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("https://mighty-harbor-8598.herokuapp.com/")

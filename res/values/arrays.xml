@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="refreshInterval">
-        <item name="60">Every hour</item>
-        <item name="180">Every 3 hours</item>
-        <item name="360">Every 6 hours</item>
-        <item name="720">Every 12 hours</item>
-        <item name="1440">Every 24 hours</item>
+        <item name="3">Every 3 hours</item>
+        <item name="6">Every 6 hours</item>
+        <item name="12">Every 12 hours</item>
+        <item name="24">Every 24 hours</item>
     </string-array>
     <string-array name="refreshIntervalValues">
-        <item name="60">60</item>
-        <item name="180">180</item>
-        <item name="360">360</item>
-        <item name="720">720</item>
-        <item name="1440">1440</item>
+        <item name="3">3</item>
+        <item name="6">6</item>
+        <item name="12">12</item>
+        <item name="24">24</item>
     </string-array>
 </resources>
