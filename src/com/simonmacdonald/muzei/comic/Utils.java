@@ -1,37 +1,56 @@
+/*
+ * Copyright (c) 2014 Simon MacDonald
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 package com.simonmacdonald.muzei.comic;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
 public class Utils {
 	public static final boolean CONNECTION_WIFI = true;
 
-    public static final int MIN_FREQ_MILLIS = 3 * 60 * 60 * 1000;
+    private static final int MILLIS_AN_HOUR = 60 * 60 * 1000;
 
-    private static final int DEFAULT_FREQ_MILLIS = 24 * 60 * 60 * 1000;
-
-    public static boolean getConfigConnection(Context context) {
+    protected static boolean isDownloadOnlyOnWifi(Context context) {
         SharedPreferences preferences = getPreferences(context);
         return preferences.getBoolean("network_preference", CONNECTION_WIFI);
     }
 
-    public static void setConfigConnection(Context context, boolean connection) {
+    protected static int getRefreshRate(Context context) {
         SharedPreferences preferences = getPreferences(context);
-        preferences.edit().putBoolean("network_preference", connection).commit();
-    }
-
-    public static void setConfigFreq(Context context, String numHours) {
-        SharedPreferences preferences = getPreferences(context);
-        preferences.edit().putString("refresh_preference", numHours).commit();
-    }
-
-    public static String getConfigFreq(Context context) {
-        SharedPreferences preferences = getPreferences(context);
-        return preferences.getString("refresh_preference", "24");
+        String sRate = preferences.getString("refresh_preference", "24");
+        int rate = Integer.parseInt(sRate) * MILLIS_AN_HOUR;
+        return rate;
     }
     
     private static SharedPreferences getPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
+    }
+    
+    protected static boolean isWifiConnected(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return  wifi.isConnected();
     }
 }

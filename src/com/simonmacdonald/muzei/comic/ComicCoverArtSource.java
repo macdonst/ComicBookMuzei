@@ -1,25 +1,27 @@
 /*
- * Copyright 2014 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright (c) 2014 Simon MacDonald
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
-
 package com.simonmacdonald.muzei.comic;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -39,8 +41,6 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 	private static final String TAG = "ComicCoverArtSource";
     private static final String SOURCE_NAME = "ComicCoverArtSource";
 
-    private static final int ROTATE_TIME_MILLIS = 3 * 60 * 60 * 1000; // rotate every 3 hours
-
     public ComicCoverArtSource() {
         super(SOURCE_NAME);
     }
@@ -53,11 +53,14 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 
     @Override
     protected void onTryUpdate(int reason) throws RetryException {
+        if (Utils.isDownloadOnlyOnWifi(this) && !Utils.isWifiConnected(this)) {
+            scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(this));
+            return;
+    	}
+    	
         String currentToken = (getCurrentArtwork() != null) ? getCurrentArtwork().getToken() : null;
         
-        Log.d(TAG, "wifi = " + Utils.getConfigConnection(this));
-        Log.d(TAG, "refresh = " + Utils.getConfigFreq(this));
-
+        final Context that = this;
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setEndpoint("https://mighty-harbor-8598.herokuapp.com/")
                 .setLogLevel(LogLevel.FULL)
@@ -75,7 +78,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                                 || (500 <= statusCode && statusCode < 600)) {
                             return new RetryException();
                         }
-                        scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);
+                        scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(that));
                         return retrofitError;
                     }
                 })
@@ -108,7 +111,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                         Uri.parse(response.url)))
                 .build());
 
-        scheduleUpdate(System.currentTimeMillis() + ROTATE_TIME_MILLIS);
+        scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(this));
     }
 }
 
