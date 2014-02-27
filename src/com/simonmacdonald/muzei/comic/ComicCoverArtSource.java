@@ -98,9 +98,14 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
         	token = "" + (Integer.valueOf(currentToken) + 1) ;
         }
 
-        Log.d(TAG, "title = " + response.title);
-        Log.d(TAG, "author = " + response.date);
-        Log.d(TAG, "imageUrl = " + response.url);
+//        Log.d(TAG, "title = " + response.title);
+//        Log.d(TAG, "author = " + response.date);
+//        Log.d(TAG, "imageUrl = " + response.url);
+//        Log.d(TAG, "detailsUrl = " + response.detailsUrl);
+        
+        if (response.detailsUrl == null) {
+        	response.detailsUrl = response.url;
+        }
         
         publishArtwork(new Artwork.Builder()
                 .title(response.title)
@@ -108,7 +113,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                 .imageUri(Uri.parse(response.url))
                 .token(token)
                 .viewIntent(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(response.url)))
+                        Uri.parse(response.detailsUrl)))
                 .build());
 
         scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(this));

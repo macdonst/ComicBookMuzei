@@ -31,5 +31,6 @@ interface ComicCoverService {
         String url;
         String title;
         String date;
+        String detailsUrl;
     }
 }
