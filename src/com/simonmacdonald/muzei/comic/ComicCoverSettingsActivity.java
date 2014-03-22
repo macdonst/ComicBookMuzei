@@ -21,16 +21,38 @@
  */
 package com.simonmacdonald.muzei.comic;
 
+import com.google.android.apps.muzei.api.MuzeiArtSource;
+import com.google.android.apps.muzei.api.internal.ProtocolConstants;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 
-public class ComicCoverSettingsActivity extends PreferenceActivity  {
+public class ComicCoverSettingsActivity extends PreferenceActivity
+	implements SharedPreferences.OnSharedPreferenceChangeListener {
+	
+	private static final String REFRESH_PREFERENCE = "refresh_preference";
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.addPreferencesFromResource(R.xml.settings);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		if (REFRESH_PREFERENCE.equals(key)) {
+			Intent updateIntent = new Intent(ComicCoverSettingsActivity.this, ComicCoverArtSource.class);
+	        updateIntent.setAction(ProtocolConstants.ACTION_HANDLE_COMMAND);
+	        updateIntent.putExtra(ProtocolConstants.EXTRA_COMMAND_ID, MuzeiArtSource.BUILTIN_COMMAND_ID_NEXT_ARTWORK);
+	        startService(updateIntent);
+		}
+	}
 
 }
