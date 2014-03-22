@@ -73,11 +73,13 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                 .setErrorHandler(new ErrorHandler() {
                     @Override
                     public Throwable handleError(RetrofitError retrofitError) {
-                        int statusCode = retrofitError.getResponse().getStatus();
-                        if (retrofitError.isNetworkError()
-                                || (500 <= statusCode && statusCode < 600)) {
-                            return new RetryException();
-                        }
+                    	if (retrofitError != null && retrofitError.getResponse() != null) {
+                            int statusCode = retrofitError.getResponse().getStatus();
+                            if (retrofitError.isNetworkError()
+                                    || (500 <= statusCode && statusCode < 600)) {
+                                return new RetryException();
+                            }
+                    	}
                         scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(that));
                         return retrofitError;
                     }
