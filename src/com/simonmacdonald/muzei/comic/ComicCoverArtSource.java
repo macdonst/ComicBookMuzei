@@ -105,19 +105,21 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 //        Log.d(TAG, "imageUrl = " + response.url);
 //        Log.d(TAG, "detailsUrl = " + response.detailsUrl);
         
-        if (response.detailsUrl == null) {
-        	response.detailsUrl = response.url;
+        if (response.url != null) {
+	        if (response.detailsUrl == null) {
+	        	response.detailsUrl = response.url;
+	        }
+	        
+	        publishArtwork(new Artwork.Builder()
+	                .title(response.title)
+	                .byline(BY_LINE)
+	                .imageUri(Uri.parse(response.url))
+	                .token(token)
+	                .viewIntent(new Intent(Intent.ACTION_VIEW,
+	                        Uri.parse(response.detailsUrl)))
+	                .build());
         }
         
-        publishArtwork(new Artwork.Builder()
-                .title(response.title)
-                .byline(BY_LINE)
-                .imageUri(Uri.parse(response.url))
-                .token(token)
-                .viewIntent(new Intent(Intent.ACTION_VIEW,
-                        Uri.parse(response.detailsUrl)))
-                .build());
-
         scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(this));
     }
 }
