@@ -5,6 +5,14 @@
     <PreferenceCategory>
             
         <ListPreference
+                android:key="company_preference"
+                android:title="@string/comic_companies"
+                android:summary="@string/comic_company_summary"
+                android:entries="@array/comicCompanies"
+                android:entryValues="@array/comicCompanyValues"
+                android:defaultValue="DC"
+                android:dialogTitle="@string/comic_companies" />
+        <ListPreference
                 android:key="refresh_preference"
                 android:title="@string/refresh_interval"
                 android:summary="@string/refresh_interval_summary"

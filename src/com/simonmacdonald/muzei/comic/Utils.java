@@ -43,6 +43,12 @@ public class Utils {
         int rate = Integer.parseInt(sRate) * MILLIS_AN_HOUR;
         return rate;
     }
+
+    protected static String getComicCompany(Context context) {
+        SharedPreferences preferences = getPreferences(context);
+        String company = preferences.getString("company_preference", "All");
+        return company;
+    }
     
     private static SharedPreferences getPreferences(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context);
