@@ -24,13 +24,21 @@ package com.simonmacdonald.muzei.comic;
 import retrofit.http.GET;
 
 interface ComicCoverService {
-    @GET("/cover")
+    @GET("/issues")
     Cover getRandomCover();
 
     static class Cover {
-        String url;
-        String title;
-        String date;
-        String detailsUrl;
+        Image image;
+        String issue_number;
+        String cover_date;
+        Volume volume;
+    }
+    static class Image {
+    	String super_url;
+    }
+    
+    static class Volume {
+    	String name;
+    	String site_detail_url;
     }
 }
