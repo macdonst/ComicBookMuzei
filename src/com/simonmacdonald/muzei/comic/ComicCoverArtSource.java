@@ -67,7 +67,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                 .setRequestInterceptor(new RequestInterceptor() {
                     @Override
                     public void intercept(RequestFacade request) {
-                        request.addQueryParam("consumer_key", Config.CONSUMER_KEY);
+                        request.addQueryParam("consumer_key", API.CONSUMER_KEY);
                     }
                 })
                 .setErrorHandler(new ErrorHandler() {

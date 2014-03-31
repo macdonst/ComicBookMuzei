@@ -27,3 +27,5 @@ proguard/
 
 # Mac files
 .DS_Store
+
+src/com/simonmacdonald/muzei/comic/API.java
