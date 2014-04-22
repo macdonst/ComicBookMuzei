@@ -15,11 +15,13 @@
     <string-array name="comicCompanies">
         <item name="All">All</item>
         <item name="DC">DC</item>
+        <item name="Image">Image</item>
         <item name="Marvel">Marvel</item>
     </string-array>
     <string-array name="comicCompanyValues">
         <item name="All">All</item>
         <item name="DC">DC</item>
+        <item name="Image">Image</item>
         <item name="Marvel">Marvel</item>
     </string-array>
 </resources>

@@ -54,7 +54,7 @@ import retrofit.RetrofitError;
 
 public class ComicCoverArtSource extends RemoteMuzeiArtSource {
     private static final String MARVEL_BY_LINE = "Data provided by Marvel. © 2014 Marvel";
-    private static final String DC_BY_LINE = "Data provided by ComicVine. © 2014 ComicVine";
+    private static final String COMIC_VINE_BY_LINE = "Data provided by ComicVine. © 2014 ComicVine";
 	private static final String TAG = "ComicCoverArtSource";
     private static final String SOURCE_NAME = "ComicCoverArtSource";
     private static final int MAX_ID = 399735;
@@ -88,10 +88,13 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
         String company = Utils.getComicCompany(this);
         if (company.equals("All")) {
         	Random random = new Random();
-        	if (random.nextInt(2) == 0) {
+        	int randomInt = random.nextInt(3);
+        	if (randomInt == 0) {
         		company = "DC";
-        	} else {
+        	} else if (randomInt == 1) {
         		company = "Marvel";
+        	} else {
+        		company = "Image";
         	}
         }
         
@@ -99,6 +102,8 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
             getDCCover(token);
         } else if (company.equals("Marvel")) {
             getMarvelCover(token);
+        } else if (company.equals("Image")) {
+        	getImageCover(token);
         }
         
         scheduleUpdate(System.currentTimeMillis() + Utils.getRefreshRate(this));
@@ -153,13 +158,22 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 	                .build());
         }
     }
+	
+	private void getImageCover(String token)  throws RetryException {
+		getCover(token, "image_volumes.json");
+	}
 
 	private void getDCCover(String token) throws RetryException {
-		int volId = getRandomVolumeID();
+		getCover(token, "dc_volumes.json");
+	}
+
+	
+	private void getCover(String token, String jsonFile) throws RetryException {
+		int volId = getRandomVolumeID(jsonFile);
 		Volume volume = fetchVolume(volId);
         
-        Log.d(TAG, "firstIssue = " + volume.getFirstIssue());
-        Log.d(TAG, "lastIssue = " + volume.getLastIssue());
+//        Log.d(TAG, "firstIssue = " + volume.getFirstIssue());
+//        Log.d(TAG, "lastIssue = " + volume.getLastIssue());
         
         Comic comic = fetchComic(volId, volume.getFirstIssue(), volume.getLastIssue());
                 
@@ -167,14 +181,14 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 			throw new RetryException();
 		}
 
-        Log.d(TAG, "title = " + comic.getTitle());
-//        Log.d(TAG, "author = " + author);
-        Log.d(TAG, "imageUrl = " + comic.getImageUrl());
-        Log.d(TAG, "detailsUrl = " + comic.getDetailsUrl());
+//        Log.d(TAG, "title = " + comic.getTitle());
+////        Log.d(TAG, "author = " + author);
+//        Log.d(TAG, "imageUrl = " + comic.getImageUrl());
+//        Log.d(TAG, "detailsUrl = " + comic.getDetailsUrl());
         
         publishArtwork(new Artwork.Builder()
                 .title(comic.getTitle())
-                .byline(DC_BY_LINE)
+                .byline(COMIC_VINE_BY_LINE)
                 .imageUri(Uri.parse(comic.getImageUrl()))
                 .token(token)
                 .viewIntent(new Intent(Intent.ACTION_VIEW,
@@ -182,10 +196,10 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
                 .build());
 	}
 	
-	private int getRandomVolumeID() {
+	private int getRandomVolumeID(String jsonFile) {
 		try {
 		    BufferedReader reader = new BufferedReader(
-		        new InputStreamReader(getAssets().open("dc_volumes.json"), "UTF-8"));
+		        new InputStreamReader(getAssets().open(jsonFile), "UTF-8"));
 		    Gson gson = new Gson();
 		    JsonObject obj = gson.fromJson(reader, JsonObject.class);
 		    
@@ -195,7 +209,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 		    int id = array.get(random.nextInt(array.size()))
 		    		.getAsJsonObject().get("id").getAsInt();
 		    
-		    Log.d(TAG, "id is = " + id);
+//		    Log.d(TAG, "id is = " + id);
 		    
 		    return id;
 		} catch (Exception e) {
@@ -210,7 +224,7 @@ public class ComicCoverArtSource extends RemoteMuzeiArtSource {
 			URL url = new URL(imageUrl);
 	        HttpURLConnection connection = client.open(url);
 	        String type = connection.getContentType();
-	        Log.d(TAG, "Content-Type = " + type);
+//	        Log.d(TAG, "Content-Type = " + type);
 	        return type.startsWith("image");
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
